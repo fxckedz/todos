@@ -30,7 +30,7 @@ public class TodoEntity {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private TodoStatus status;
+    private TodoStatus status = TodoStatus.PENDING;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
