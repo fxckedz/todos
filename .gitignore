@@ -1,0 +1,55 @@
+# --- Arquivos de IDE ---
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.classpath
+.project
+.settings/
+bin/
+.factorypath
+
+# --- Build e Dependências ---
+target/
+build/
+.gradle/
+!gradle-wrapper.jar
+out/
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# --- Logs e Arquivos Temporários ---
+*.log
+logs/
+*.swp
+*.swo
+.DS_Store
+*.orig
+*~
+
+# --- Ambiente de Desenvolvimento ---
+.env
+*.properties
+*.yml (exceto application.yml, se necessário)
+/config/application-*.yml
+
+# --- Banco de Dados/Sistemas Externos ---
+*.db
+*.h2.db
+*.sqlite
+/docker-compose.yml (se não for compartilhar)
+/data/
+
+# --- Sistema Operacional ---
+Thumbs.db
+ehthumbs.db
