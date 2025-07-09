@@ -1,6 +1,8 @@
 package br.com.medeiros.api.todo.v1.exceptions.handler;
 
 import br.com.medeiros.api.todo.v1.exceptions.ExceptionResponse;
+import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NullIdException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -39,5 +41,14 @@ public class GlobalExceptionHandler {
                 "INTERNAL SERVER ERROR",
                 ex.getMessage()
         );
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(NullIdException.class)
+    public ExceptionResponse handleNullId(NullIdException ex){
+        return new ExceptionResponse(
+            new Date(),
+            "INTERNAL SERVER ERROR",
+            ex.getMessage());
     }
 }
