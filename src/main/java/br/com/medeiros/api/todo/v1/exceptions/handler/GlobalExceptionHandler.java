@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
 
         return new ExceptionResponse(
                 new Date(),
-                "VALIDATION ERROR",
+                "BAD REQUEST",
                 details
         );
     }
