@@ -2,6 +2,7 @@ package br.com.medeiros.api.todo.v1.controllers;
 
 import br.com.medeiros.api.todo.v1.services.TodoService;
 import br.com.medeiros.api.todo.v1.data.RequestDto;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class TodoController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createTodo(@RequestBody RequestDto requestDto){
+    public ResponseEntity<Void> createTodo(@Valid @RequestBody RequestDto requestDto){
         var id = todoService.createTodo(requestDto.name(), requestDto.description());
         return ResponseEntity.created(URI.create("/api/todos/v1/" + id.toString())).build();
     }
