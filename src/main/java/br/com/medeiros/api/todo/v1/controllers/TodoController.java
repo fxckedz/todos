@@ -29,11 +29,13 @@ public class TodoController {
     @GetMapping
     public ResponseEntity<List<ResponseDto>> findAllTodos(){
 
-        var todos = todoService.findAllTodos();
+        var todoEntities = todoService.findAllTodos();
 
-        if(todos.isEmpty()){
+        if(todoEntities.isEmpty()){
             return ResponseEntity.noContent().build();
         }
+
+        var todos = todoEntities.stream().map(ResponseDto::fromEntity).toList();
 
         return ResponseEntity.ok(todos);
     }

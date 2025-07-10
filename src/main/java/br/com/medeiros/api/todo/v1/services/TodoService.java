@@ -29,12 +29,8 @@ public class TodoService {
         return savedTodo.getId();
     }
 
-    public List<ResponseDto> findAllTodos(){
-        return todoRepository.
-            findAll().
-            stream().
-            map(ResponseDto::fromEntity)
-            .toList();
+    public List<TodoEntity> findAllTodos(){
+        return todoRepository.findAll();
     }
 
 }
