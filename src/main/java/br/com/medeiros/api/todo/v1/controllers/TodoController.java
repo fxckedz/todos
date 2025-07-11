@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/todos/v1")
@@ -38,6 +39,18 @@ public class TodoController {
         var todos = todoEntities.stream().map(ResponseDto::fromEntity).toList();
 
         return ResponseEntity.ok(todos);
+    }
+
+    @GetMapping("/{stringId}")
+    public ResponseEntity<ResponseDto> findTodoById(@PathVariable String stringId){
+
+        UUID id = UUID.fromString(stringId);
+
+        var entity =  todoService.findTodoById(id);
+
+        ResponseDto responseDto = new ResponseDto(entity.getName(), entity.getDescription(), entity.getStatus(), entity.getCreatedAt());
+
+        return ResponseEntity.ok(responseDto);
     }
 
 }
