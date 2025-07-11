@@ -1,12 +1,12 @@
 package br.com.medeiros.api.todo.v1.services;
 
-import br.com.medeiros.api.todo.v1.data.ResponseDto;
 import br.com.medeiros.api.todo.v1.entities.TodoEntity;
 import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NullIdException;
 import br.com.medeiros.api.todo.v1.repositories.TodoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -31,6 +31,16 @@ public class TodoService {
 
     public List<TodoEntity> findAllTodos(){
         return todoRepository.findAll();
+    }
+
+    public TodoEntity findTodoById(UUID id){
+        Optional<TodoEntity> entity = todoRepository.findById(id);
+
+        if(entity.isEmpty()){
+            throw new RuntimeException("Id não existe");
+        }
+
+        return entity.get();
     }
 
 }
