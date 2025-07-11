@@ -1,7 +1,9 @@
 package br.com.medeiros.api.todo.v1.controllers;
 
+import br.com.medeiros.api.todo.v1.data.RequestUpdateTodoByIdDto;
+import br.com.medeiros.api.todo.v1.entities.TodoEntity;
 import br.com.medeiros.api.todo.v1.services.TodoService;
-import br.com.medeiros.api.todo.v1.data.RequestDto;
+import br.com.medeiros.api.todo.v1.data.RequestCreateTodoDto;
 import br.com.medeiros.api.todo.v1.data.ResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +24,8 @@ public class TodoController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createTodo(@Valid @RequestBody RequestDto requestDto){
-        var id = todoService.createTodo(requestDto.name(), requestDto.description());
+    public ResponseEntity<Void> createTodo(@Valid @RequestBody RequestCreateTodoDto requestCreateTodoDto){
+        var id = todoService.createTodo(requestCreateTodoDto);
         return ResponseEntity.created(URI.create("/api/todos/v1/" + id.toString())).build();
     }
 
@@ -48,7 +50,7 @@ public class TodoController {
 
         var entity =  todoService.findTodoById(id);
 
-        ResponseDto responseDto = new ResponseDto(entity.getName(), entity.getDescription(), entity.getStatus(), entity.getCreatedAt());
+        ResponseDto responseDto = new ResponseDto(entity.getId(), entity.getName(), entity.getDescription(), entity.getStatus(), entity.getCreatedAt());
 
         return ResponseEntity.ok(responseDto);
     }
@@ -61,6 +63,20 @@ public class TodoController {
         todoService.deleteTodoById(id);
 
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{stringId}")
+    public ResponseEntity<ResponseDto> updateTodoById(
+            @PathVariable String stringId,
+            @RequestBody RequestUpdateTodoByIdDto req){
+
+        UUID id = UUID.fromString(stringId);
+
+        TodoEntity entity = todoService.updateTodoById(id, req);
+
+        ResponseDto responseDto = new ResponseDto(entity.getId(), entity.getName(), entity.getDescription(), entity.getStatus(), entity.getCreatedAt());
+
+        return ResponseEntity.ok(responseDto);
     }
 
 }

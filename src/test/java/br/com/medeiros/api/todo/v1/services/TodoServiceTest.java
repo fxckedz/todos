@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import br.com.medeiros.api.todo.v1.data.RequestCreateTodoDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -34,15 +35,14 @@ public class TodoServiceTest {
 
     @Test
     void createTodo_ShouldReturnSavedTodoId() {
-        String name = "valid_name";
-        String description = "valid_description";
-        TodoEntity savedTodo = new TodoEntity(name, description);
+        RequestCreateTodoDto req = new RequestCreateTodoDto("valid_name", "valid_description");
+        TodoEntity savedTodo = new TodoEntity(req.name(), req.description());
         UUID expectedId = UUID.randomUUID();
         savedTodo.setId(expectedId);
 
         when(todoRepository.save(any(TodoEntity.class))).thenReturn(savedTodo);
 
-        UUID id = todoService.createTodo(name, description);
+        UUID id = todoService.createTodo(req);
 
         assertEquals(expectedId, id);
 
@@ -51,15 +51,14 @@ public class TodoServiceTest {
 
     @Test
     void createTodo_ShouldThrowException_WhenIdNull() {
-        String name = "valid_name";
-        String description = "valid_description";
-        TodoEntity savedTodo = new TodoEntity(name, description);
+        RequestCreateTodoDto req = new RequestCreateTodoDto("valid_name", "valid_description");
+        TodoEntity savedTodo = new TodoEntity(req.name(), req.description());
         savedTodo.setId(null);
 
         when(todoRepository.save(any(TodoEntity.class))).thenReturn(savedTodo);
 
         assertThrows(NullIdException.class, () -> {
-            todoService.createTodo(name, description);
+            todoService.createTodo(req);
         });
 
         verify(todoRepository, times(1)).save(any(TodoEntity.class));
@@ -68,8 +67,7 @@ public class TodoServiceTest {
     @Test
     void createTodo_ShouldCreateEntityWithCorrectDataAndNonNullId() {
         // Arrange
-        String name = "valid_name";
-        String description = "valid_description";
+        RequestCreateTodoDto req = new RequestCreateTodoDto("valid_name", "valid_description");
         TodoStatus expectedStatus = TodoStatus.PENDING;
         UUID expectedId = UUID.randomUUID();
             
@@ -84,15 +82,15 @@ public class TodoServiceTest {
                 return entity;
             });
 
-        UUID returnedId = todoService.createTodo(name, description);
+        UUID returnedId = todoService.createTodo(req);
 
         ArgumentCaptor<TodoEntity> captor = ArgumentCaptor.forClass(TodoEntity.class);
         verify(todoRepository).save(captor.capture());
             
         TodoEntity savedEntity = captor.getValue();
             
-        assertEquals(name, savedEntity.getName());
-        assertEquals(description, savedEntity.getDescription());
+        assertEquals(req.name(), savedEntity.getName());
+        assertEquals(req.description(), savedEntity.getDescription());
         assertEquals(expectedStatus, savedEntity.getStatus());
             
         assertNotNull(savedEntity.getId());

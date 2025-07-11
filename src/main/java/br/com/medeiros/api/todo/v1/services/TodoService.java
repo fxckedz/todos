@@ -1,5 +1,7 @@
 package br.com.medeiros.api.todo.v1.services;
 
+import br.com.medeiros.api.todo.v1.data.RequestCreateTodoDto;
+import br.com.medeiros.api.todo.v1.data.RequestUpdateTodoByIdDto;
 import br.com.medeiros.api.todo.v1.entities.TodoEntity;
 import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NotFoundId;
 import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NullIdException;
@@ -19,8 +21,8 @@ public class TodoService {
         this.todoRepository = todoRepository;
     }
 
-    public UUID createTodo(String name, String description){
-        var todo = new TodoEntity(name, description);
+    public UUID createTodo(RequestCreateTodoDto req){
+        var todo = new TodoEntity(req.name(), req.description());
         var savedTodo = todoRepository.save(todo);
 
         if(savedTodo.getId() == null){
@@ -48,6 +50,29 @@ public class TodoService {
         if (todoRepository.existsById(id)) {
             todoRepository.deleteById(id);
         }
+    }
+
+    public TodoEntity updateTodoById(UUID id, RequestUpdateTodoByIdDto req){
+        Optional<TodoEntity> entity = todoRepository.findById(id);
+
+        if(entity.isEmpty()){
+            throw new NotFoundId();
+        }
+
+        var en = entity.get();
+
+        if (req.name() != null) {
+            en.setName(req.name());
+        }
+        if (req.description() != null) {
+            en.setDescription(req.description());
+        }
+
+        if (req.status() != null) {
+            en.setStatus(req.status());
+        }
+
+        return todoRepository.save(en);
     }
 
 }
