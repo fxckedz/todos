@@ -1,10 +1,12 @@
 package br.com.medeiros.api.todo.v1.exceptions.handler;
 
 import br.com.medeiros.api.todo.v1.exceptions.ExceptionResponse;
+import br.com.medeiros.api.todo.v1.exceptions.customExceptions.CustomException;
 import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NotFoundId;
 import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NullIdException;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,7 +31,7 @@ public class GlobalExceptionHandler {
 
         return new ExceptionResponse(
                 new Date(),
-                "BAD REQUEST",
+                HttpStatus.BAD_REQUEST,
                 details
         );
     }
@@ -39,26 +41,19 @@ public class GlobalExceptionHandler {
     public ExceptionResponse handleGenericExceptions(Exception ex){
         return new ExceptionResponse(
                 new Date(),
-                "INTERNAL SERVER ERROR",
+                HttpStatus.INTERNAL_SERVER_ERROR,
                 ex.getMessage()
         );
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(NotFoundId.class)
-    public ExceptionResponse handleNotFoundId(NotFoundId ex){
-        return new ExceptionResponse(
-                new Date(),
-                "BAD REQUEST",
-                ex.getMessage());
-    }
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(NullIdException.class)
-    public ExceptionResponse handleNullId(NullIdException ex){
-        return new ExceptionResponse(
-            new Date(),
-            "INTERNAL SERVER ERROR",
-            ex.getMessage());
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ExceptionResponse> handleCustomExceptions(CustomException ex) {
+        return ResponseEntity
+                .status(ex.getStatus())
+                .body(new ExceptionResponse(
+                        new Date(),
+                        ex.getStatus(),
+                        ex.getMessage()
+                ));
     }
 }
