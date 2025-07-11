@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import br.com.medeiros.api.todo.v1.data.RequestCreateTodoDto;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -33,72 +34,80 @@ public class TodoServiceTest {
     @InjectMocks
     private TodoService todoService;
 
-    @Test
-    void createTodo_ShouldReturnSavedTodoId() {
-        RequestCreateTodoDto req = new RequestCreateTodoDto("valid_name", "valid_description");
-        TodoEntity savedTodo = new TodoEntity(req.name(), req.description());
-        UUID expectedId = UUID.randomUUID();
-        savedTodo.setId(expectedId);
+    @Nested
+    class CreateTodo {
+        private final RequestCreateTodoDto validRequest =
+                new RequestCreateTodoDto("valid_name", "valid_description");
 
-        when(todoRepository.save(any(TodoEntity.class))).thenReturn(savedTodo);
+        @Test
+        void shouldReturnSavedTodoId() {
+            // Arrange
+            TodoEntity savedTodo = new TodoEntity(validRequest.name(), validRequest.description());
+            UUID expectedId = UUID.randomUUID();
+            savedTodo.setId(expectedId);
 
-        UUID id = todoService.createTodo(req);
+            when(todoRepository.save(any(TodoEntity.class))).thenReturn(savedTodo);
 
-        assertEquals(expectedId, id);
+            // Act
+            UUID id = todoService.createTodo(validRequest);
 
-        verify(todoRepository, times(1)).save(any(TodoEntity.class));
-    }
+            // Assert
+            assertEquals(expectedId, id);
+            verify(todoRepository, times(1)).save(any(TodoEntity.class));
+        }
 
-    @Test
-    void createTodo_ShouldThrowException_WhenIdNull() {
-        RequestCreateTodoDto req = new RequestCreateTodoDto("valid_name", "valid_description");
-        TodoEntity savedTodo = new TodoEntity(req.name(), req.description());
-        savedTodo.setId(null);
+        @Test
+        void shouldThrowException_WhenIdNull() {
+            // Arrange
+            TodoEntity savedTodo = new TodoEntity(validRequest.name(), validRequest.description());
+            savedTodo.setId(null);
 
-        when(todoRepository.save(any(TodoEntity.class))).thenReturn(savedTodo);
+            when(todoRepository.save(any(TodoEntity.class))).thenReturn(savedTodo);
 
-        assertThrows(NullIdException.class, () -> {
-            todoService.createTodo(req);
-        });
-
-        verify(todoRepository, times(1)).save(any(TodoEntity.class));
-    }
-
-    @Test
-    void createTodo_ShouldCreateEntityWithCorrectDataAndNonNullId() {
-        // Arrange
-        RequestCreateTodoDto req = new RequestCreateTodoDto("valid_name", "valid_description");
-        TodoStatus expectedStatus = TodoStatus.PENDING;
-        UUID expectedId = UUID.randomUUID();
-            
-        when(todoRepository.save(any(TodoEntity.class)))
-            .thenAnswer(invocation -> {
-                TodoEntity entity = invocation.getArgument(0);
-                // Simula o JPA definindo o ID e timestamps
-                entity.setId(expectedId);
-                LocalDateTime now = LocalDateTime.now();
-                entity.setCreatedAt(now);
-                entity.setUpdatedAt(now);
-                return entity;
+            // Act & Assert
+            assertThrows(NullIdException.class, () -> {
+                todoService.createTodo(validRequest);
             });
 
-        UUID returnedId = todoService.createTodo(req);
-
-        ArgumentCaptor<TodoEntity> captor = ArgumentCaptor.forClass(TodoEntity.class);
-        verify(todoRepository).save(captor.capture());
-            
-        TodoEntity savedEntity = captor.getValue();
-            
-        assertEquals(req.name(), savedEntity.getName());
-        assertEquals(req.description(), savedEntity.getDescription());
-        assertEquals(expectedStatus, savedEntity.getStatus());
-            
-        assertNotNull(savedEntity.getId());
-        assertEquals(expectedId, savedEntity.getId());
-        assertEquals(expectedId, returnedId);
-            
-        assertNotNull(savedEntity.getCreatedAt());
-        assertNotNull(savedEntity.getUpdatedAt());
+            verify(todoRepository, times(1)).save(any(TodoEntity.class));
         }
+
+        @Test
+        void shouldCreateEntityWithCorrectDataAndNonNullId() {
+            // Arrange
+            TodoStatus expectedStatus = TodoStatus.PENDING;
+            UUID expectedId = UUID.randomUUID();
+
+            when(todoRepository.save(any(TodoEntity.class)))
+                    .thenAnswer(invocation -> {
+                        TodoEntity entity = invocation.getArgument(0);
+                        entity.setId(expectedId);
+                        LocalDateTime now = LocalDateTime.now();
+                        entity.setCreatedAt(now);
+                        entity.setUpdatedAt(now);
+                        return entity;
+                    });
+
+            // Act
+            UUID returnedId = todoService.createTodo(validRequest);
+
+            // Assert
+            ArgumentCaptor<TodoEntity> captor = ArgumentCaptor.forClass(TodoEntity.class);
+            verify(todoRepository).save(captor.capture());
+
+            TodoEntity savedEntity = captor.getValue();
+
+            assertEquals(validRequest.name(), savedEntity.getName());
+            assertEquals(validRequest.description(), savedEntity.getDescription());
+            assertEquals(expectedStatus, savedEntity.getStatus());
+
+            assertNotNull(savedEntity.getId());
+            assertEquals(expectedId, savedEntity.getId());
+            assertEquals(expectedId, returnedId);
+
+            assertNotNull(savedEntity.getCreatedAt());
+            assertNotNull(savedEntity.getUpdatedAt());
+        }
+    }
 }
 
