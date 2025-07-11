@@ -1,6 +1,7 @@
 package br.com.medeiros.api.todo.v1.exceptions.handler;
 
 import br.com.medeiros.api.todo.v1.exceptions.ExceptionResponse;
+import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NotFoundId;
 import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NullIdException;
 
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,15 @@ public class GlobalExceptionHandler {
                 "INTERNAL SERVER ERROR",
                 ex.getMessage()
         );
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NotFoundId.class)
+    public ExceptionResponse handleNotFoundId(NotFoundId ex){
+        return new ExceptionResponse(
+                new Date(),
+                "BAD REQUEST",
+                ex.getMessage());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
