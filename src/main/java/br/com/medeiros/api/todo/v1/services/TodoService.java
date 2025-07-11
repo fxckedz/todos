@@ -44,4 +44,10 @@ public class TodoService {
         return entity.get();
     }
 
+    public void deleteTodoById(UUID id) {
+        if (todoRepository.existsById(id)) {
+            todoRepository.deleteById(id);
+        }
+    }
+
 }
