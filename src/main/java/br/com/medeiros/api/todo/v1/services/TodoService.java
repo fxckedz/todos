@@ -1,6 +1,7 @@
 package br.com.medeiros.api.todo.v1.services;
 
 import br.com.medeiros.api.todo.v1.entities.TodoEntity;
+import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NotFoundId;
 import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NullIdException;
 import br.com.medeiros.api.todo.v1.repositories.TodoRepository;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class TodoService {
         Optional<TodoEntity> entity = todoRepository.findById(id);
 
         if(entity.isEmpty()){
-            throw new RuntimeException("Id não existe");
+            throw new NotFoundId();
         }
 
         return entity.get();
