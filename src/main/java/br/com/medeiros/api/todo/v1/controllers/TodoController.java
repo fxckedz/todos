@@ -53,4 +53,14 @@ public class TodoController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @DeleteMapping("/{stringId}")
+    public ResponseEntity<Void> deleteTodoById(@PathVariable String stringId){
+
+        UUID id = UUID.fromString(stringId);
+
+        todoService.deleteTodoById(id);
+
+        return ResponseEntity.ok().build();
+    }
+
 }
