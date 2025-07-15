@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import br.com.medeiros.api.todo.v1.data.RequestCreateTodoDto;
+import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NotFoundId;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,30 +40,28 @@ public class TodoServiceTest {
 
         @Test
         void shouldReturnSavedTodoId() {
-            // Arrange
+
             TodoEntity savedTodo = new TodoEntity(validRequest.name(), validRequest.description());
             UUID expectedId = UUID.randomUUID();
             savedTodo.setId(expectedId);
 
             when(todoRepository.save(any(TodoEntity.class))).thenReturn(savedTodo);
 
-            // Act
             UUID id = todoService.createTodo(validRequest);
 
-            // Assert
             assertEquals(expectedId, id);
             verify(todoRepository, times(1)).save(any(TodoEntity.class));
         }
 
         @Test
         void shouldThrowException_WhenIdNull() {
-            // Arrange
+
             TodoEntity savedTodo = new TodoEntity(validRequest.name(), validRequest.description());
             savedTodo.setId(null);
 
             when(todoRepository.save(any(TodoEntity.class))).thenReturn(savedTodo);
 
-            // Act & Assert
+
             assertThrows(NullIdException.class, () -> {
                 todoService.createTodo(validRequest);
             });
@@ -86,10 +85,9 @@ public class TodoServiceTest {
                         return entity;
                     });
 
-            // Act
+
             UUID returnedId = todoService.createTodo(validRequest);
 
-            // Assert
             ArgumentCaptor<TodoEntity> captor = ArgumentCaptor.forClass(TodoEntity.class);
             verify(todoRepository).save(captor.capture());
 
@@ -105,6 +103,17 @@ public class TodoServiceTest {
 
             assertNotNull(savedEntity.getCreatedAt());
             assertNotNull(savedEntity.getUpdatedAt());
+        }
+
+        @Test
+        void ShouldThrowsExceptionWhenRepositoryThrows(){
+            TodoEntity todoEntity = new TodoEntity(validRequest.name(), validRequest.description());
+
+            when(todoRepository.save(todoEntity))
+                    .thenThrow(new RuntimeException("Erro no banco de dados"));
+
+            assertThrows(RuntimeException.class, () -> todoService.createTodo(validRequest));
+            verify(todoRepository, times(1)).save(any(TodoEntity.class));
         }
     }
 
@@ -142,6 +151,48 @@ public class TodoServiceTest {
             when(todoRepository.findAll()).thenThrow(new RuntimeException("Erro no banco de dados"));
             assertThrows(RuntimeException.class, () -> todoService.findAllTodos());
             verify(todoRepository, times(1)).findAll();
+        }
+
+    }
+
+    @Nested
+    class FindTodoById{
+
+        @Test
+        void ShouldReturnIdIfTodoExists(){
+            UUID id = UUID.randomUUID();
+            TodoEntity mockTodo = new TodoEntity("Tarefa 1", "Descrição 1");
+            mockTodo.setId(id);
+
+            when(todoRepository.findById(id)).thenReturn(Optional.of(mockTodo));
+
+            TodoEntity result = todoService.findTodoById(id);
+
+            assertEquals(mockTodo, result);
+            verify(todoRepository, times(1)).findById(id);
+        }
+
+        @Test
+        void ShouldThrowNotFoundIdWhenIdDoesNotExists(){
+
+            UUID id = UUID.randomUUID();
+
+            when(todoRepository.findById(id)).thenReturn(Optional.empty());
+
+            assertThrows(NotFoundId.class, () -> todoService.findTodoById(id));
+
+            verify(todoRepository, times(1)).findById(id);
+        }
+
+        @Test
+        void ShouldThrowsExceptionWhenRepositoryThrows() {
+
+            UUID id = UUID.randomUUID();
+            when(todoRepository.findById(id)).thenThrow(new RuntimeException("Erro no banco de dados"));
+
+
+            assertThrows(RuntimeException.class, () -> todoService.findTodoById(id));
+            verify(todoRepository, times(1)).findById(id);
         }
 
     }
