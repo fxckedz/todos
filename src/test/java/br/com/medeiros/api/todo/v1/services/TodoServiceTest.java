@@ -2,9 +2,7 @@ package br.com.medeiros.api.todo.v1.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -71,7 +69,7 @@ public class TodoServiceTest {
 
         @Test
         void shouldCreateEntityWithCorrectDataAndNonNullId() {
-            // Arrange
+
             TodoStatus expectedStatus = TodoStatus.PENDING;
             UUID expectedId = UUID.randomUUID();
 
@@ -158,9 +156,10 @@ public class TodoServiceTest {
     @Nested
     class FindTodoById{
 
+        UUID id = UUID.randomUUID();
+
         @Test
         void ShouldReturnIdIfTodoExists(){
-            UUID id = UUID.randomUUID();
             TodoEntity mockTodo = new TodoEntity("Tarefa 1", "Descrição 1");
             mockTodo.setId(id);
 
@@ -175,8 +174,6 @@ public class TodoServiceTest {
         @Test
         void ShouldThrowNotFoundIdWhenIdDoesNotExists(){
 
-            UUID id = UUID.randomUUID();
-
             when(todoRepository.findById(id)).thenReturn(Optional.empty());
 
             assertThrows(NotFoundId.class, () -> todoService.findTodoById(id));
@@ -187,14 +184,49 @@ public class TodoServiceTest {
         @Test
         void ShouldThrowsExceptionWhenRepositoryThrows() {
 
-            UUID id = UUID.randomUUID();
             when(todoRepository.findById(id)).thenThrow(new RuntimeException("Erro no banco de dados"));
-
 
             assertThrows(RuntimeException.class, () -> todoService.findTodoById(id));
             verify(todoRepository, times(1)).findById(id);
         }
 
+    }
+
+    @Nested
+    class DeleteTodoById {
+
+        UUID id = UUID.randomUUID();
+
+        @Test
+        void ShouldDeleteTodoIfIdExists(){
+
+            when(todoRepository.existsById(id)).thenReturn(true);
+
+            todoService.deleteTodoById(id);
+
+            verify(todoRepository).existsById(id);
+            verify(todoRepository).deleteById(id);
+        }
+
+        @Test
+        void ShouldDoNothingIfIdDoesNotExists(){
+
+            when(todoRepository.existsById(id)).thenReturn(false);
+
+            todoService.deleteTodoById(id);
+
+            verify(todoRepository).existsById(id);
+            verify(todoRepository, never()).deleteById(id);
+        }
+
+        @Test
+        void ShouldThrowsExceptionWhenRepositoryThrows() {
+
+            when(todoRepository.existsById(id)).thenThrow(new RuntimeException("Erro no banco de dados"));
+
+            assertThrows(RuntimeException.class, () -> todoService.deleteTodoById(id));
+            verify(todoRepository, never()).deleteById(id);
+        }
     }
 }
 
