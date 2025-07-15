@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import br.com.medeiros.api.todo.v1.data.RequestCreateTodoDto;
+import br.com.medeiros.api.todo.v1.data.RequestUpdateTodoByIdDto;
 import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NotFoundId;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -226,6 +227,56 @@ public class TodoServiceTest {
 
             assertThrows(RuntimeException.class, () -> todoService.deleteTodoById(id));
             verify(todoRepository, never()).deleteById(id);
+        }
+    }
+
+    @Nested
+    class UpdateTodoById{
+
+        UUID id = UUID.randomUUID();
+
+        @Test
+        void ShouldUpdateWhenFieldsProvided(){
+            RequestUpdateTodoByIdDto req = new RequestUpdateTodoByIdDto("new_name","new_description", TodoStatus.COMPLETED);
+
+            TodoEntity existingEntity = new TodoEntity("old_name", "old_description");
+
+            when(todoRepository.findById(id)).thenReturn(Optional.of(existingEntity));
+            when(todoRepository.save(existingEntity)).thenReturn(existingEntity);
+
+            TodoEntity updatedEntity = todoService.updateTodoById(id, req);
+
+            assertEquals(req.name(), updatedEntity.getName());
+            assertEquals(req.description(), updatedEntity.getDescription());
+            assertEquals(req.status(), updatedEntity.getStatus());
+
+            verify(todoRepository).findById(id);
+            verify(todoRepository).save(existingEntity);
+        }
+
+        @Test
+        void ShouldThrowNotFoundIdWhenNotFoundId(){
+
+            when(todoRepository.findById(id)).thenReturn(Optional.empty());
+
+            assertThrows(NotFoundId.class, () ->
+                todoService.updateTodoById(id, new RequestUpdateTodoByIdDto(null, null, null))
+            );
+
+            verify(todoRepository, never()).save(any());
+        }
+
+        @Test
+        void ShouldThrowsExceptionWhenRepositoryThrows(){
+
+            when(todoRepository.findById(id))
+                    .thenThrow(new RuntimeException("Erro no banco de dados"));
+
+            assertThrows(RuntimeException.class, () ->
+                    todoService.updateTodoById(id, new RequestUpdateTodoByIdDto(null, null, null))
+            );
+
+            verify(todoRepository, never()).save(any());
         }
     }
 }
