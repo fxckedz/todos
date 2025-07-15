@@ -1,15 +1,13 @@
 package br.com.medeiros.api.todo.v1.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
 
 import br.com.medeiros.api.todo.v1.data.RequestCreateTodoDto;
 import org.junit.jupiter.api.Nested;
@@ -108,6 +106,44 @@ public class TodoServiceTest {
             assertNotNull(savedEntity.getCreatedAt());
             assertNotNull(savedEntity.getUpdatedAt());
         }
+    }
+
+    @Nested
+    class FindAllTodos{
+
+        @Test
+        void ShouldReturnListOfTodosIfExists(){
+            List<TodoEntity> mockTodos = Arrays.asList(
+                    new TodoEntity("Tarefa 1", "Descrição 1"),
+                    new TodoEntity("Tarefa 2", "Descrição 2")
+            );
+
+            when(todoRepository.findAll()).thenReturn(mockTodos);
+
+            List<TodoEntity> result = todoService.findAllTodos();
+
+            assertEquals(2, result.size());
+            verify(todoRepository, times(1)).findAll();
+        }
+
+        @Test
+        void ShouldReturnEmptyListIfTodoNotExists(){
+
+            when(todoRepository.findAll()).thenReturn(Collections.emptyList());
+
+            List<TodoEntity> result = todoService.findAllTodos();
+
+            assertTrue(result.isEmpty());
+            verify(todoRepository, times(1)).findAll();
+        }
+
+        @Test
+        void ShouldThrowsExceptionWhenRepositoryThrows(){
+            when(todoRepository.findAll()).thenThrow(new RuntimeException("Erro no banco de dados"));
+            assertThrows(RuntimeException.class, () -> todoService.findAllTodos());
+            verify(todoRepository, times(1)).findAll();
+        }
+
     }
 }
 
