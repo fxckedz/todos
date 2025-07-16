@@ -5,8 +5,8 @@ import br.com.medeiros.api.todo.v1.entities.TodoEntity;
 import br.com.medeiros.api.todo.v1.services.TodoService;
 import br.com.medeiros.api.todo.v1.data.RequestCreateTodoDto;
 import br.com.medeiros.api.todo.v1.data.ResponseDto;
+import br.com.medeiros.api.todo.v1.util.MediaType;
 import jakarta.validation.Valid;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,15 +24,15 @@ public class TodoController {
         this.todoService = todoService;
     }
 
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-                 produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML},
+                 produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML}
                 )
     public ResponseEntity<Void> createTodo(@Valid @RequestBody RequestCreateTodoDto requestCreateTodoDto){
         var id = todoService.createTodo(requestCreateTodoDto);
         return ResponseEntity.created(URI.create("/api/todos/v1/" + id.toString())).build();
     }
 
-    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML})
     public ResponseEntity<List<ResponseDto>> findAllTodos(){
 
         var todoEntities = todoService.findAllTodos();
@@ -47,7 +47,7 @@ public class TodoController {
     }
 
     @GetMapping(value = "/{stringId}",
-                produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+                produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML}
                 )
     public ResponseEntity<ResponseDto> findTodoById(@PathVariable String stringId){
 
@@ -71,8 +71,8 @@ public class TodoController {
     }
 
     @PutMapping(value = "/{stringId}",
-                consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-                produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+                consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML},
+                produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML}
                 )
     public ResponseEntity<ResponseDto> updateTodoById(
             @PathVariable String stringId,
