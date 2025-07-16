@@ -6,6 +6,7 @@ import br.com.medeiros.api.todo.v1.services.TodoService;
 import br.com.medeiros.api.todo.v1.data.RequestCreateTodoDto;
 import br.com.medeiros.api.todo.v1.data.ResponseDto;
 import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,13 +24,15 @@ public class TodoController {
         this.todoService = todoService;
     }
 
-    @PostMapping
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+                 produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+                )
     public ResponseEntity<Void> createTodo(@Valid @RequestBody RequestCreateTodoDto requestCreateTodoDto){
         var id = todoService.createTodo(requestCreateTodoDto);
         return ResponseEntity.created(URI.create("/api/todos/v1/" + id.toString())).build();
     }
 
-    @GetMapping
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<ResponseDto>> findAllTodos(){
 
         var todoEntities = todoService.findAllTodos();
@@ -43,7 +46,9 @@ public class TodoController {
         return ResponseEntity.ok(todos);
     }
 
-    @GetMapping("/{stringId}")
+    @GetMapping(value = "/{stringId}",
+                produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+                )
     public ResponseEntity<ResponseDto> findTodoById(@PathVariable String stringId){
 
         UUID id = UUID.fromString(stringId);
@@ -65,7 +70,10 @@ public class TodoController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{stringId}")
+    @PutMapping(value = "/{stringId}",
+                consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+                produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+                )
     public ResponseEntity<ResponseDto> updateTodoById(
             @PathVariable String stringId,
             @RequestBody RequestUpdateTodoByIdDto req){
