@@ -27,9 +27,12 @@ public class TodoController {
     }
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML})
-    public ResponseEntity<Void> createTodo(@Valid @RequestBody RequestCreateTodoDto requestCreateTodoDto){
-        var id = todoService.createTodo(requestCreateTodoDto);
-        return ResponseEntity.created(URI.create("/api/todos/v1/" + id.toString())).build();
+    public ResponseEntity<ResponseDto> createTodo(@Valid @RequestBody RequestCreateTodoDto requestCreateTodoDto){
+        var todo = todoService.createTodo(requestCreateTodoDto);
+
+        var responseDto = ResponseDto.fromEntity(todo);
+
+        return ResponseEntity.created(URI.create("/api/todos/v1/" + responseDto.id())).body(responseDto);
     }
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML})
@@ -84,9 +87,9 @@ public class TodoController {
 
         UUID id = UUID.fromString(stringId);
 
-        TodoEntity entity = todoService.updateTodoById(id, req);
+        TodoEntity todo = todoService.updateTodoById(id, req);
 
-        ResponseDto responseDto = new ResponseDto(entity.getId(), entity.getName(), entity.getDescription(), entity.getStatus(), entity.getCreatedAt());
+        ResponseDto responseDto = ResponseDto.fromEntity(todo);
 
         responseDto.add(linkTo(methodOn(TodoController.class).findTodoById(stringId)).withSelfRel());
 

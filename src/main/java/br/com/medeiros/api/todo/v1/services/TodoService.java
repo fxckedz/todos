@@ -21,7 +21,7 @@ public class TodoService {
         this.todoRepository = todoRepository;
     }
 
-    public UUID createTodo(RequestCreateTodoDto req){
+    public TodoEntity createTodo(RequestCreateTodoDto req){
         var todo = new TodoEntity(req.name(), req.description());
         var savedTodo = todoRepository.save(todo);
 
@@ -29,7 +29,7 @@ public class TodoService {
             throw new NullIdException();
         }
 
-        return savedTodo.getId();
+        return savedTodo;
     }
 
     public List<TodoEntity> findAllTodos(){
