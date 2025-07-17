@@ -9,6 +9,8 @@ import br.com.medeiros.api.todo.v1.util.MediaType;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.net.URI;
 import java.util.List;
@@ -24,9 +26,7 @@ public class TodoController {
         this.todoService = todoService;
     }
 
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML},
-                 produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML}
-                )
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML})
     public ResponseEntity<Void> createTodo(@Valid @RequestBody RequestCreateTodoDto requestCreateTodoDto){
         var id = todoService.createTodo(requestCreateTodoDto);
         return ResponseEntity.created(URI.create("/api/todos/v1/" + id.toString())).build();
@@ -43,6 +43,8 @@ public class TodoController {
 
         var todos = todoEntities.stream().map(ResponseDto::fromEntity).toList();
 
+        todos.forEach(p -> p.add(linkTo(methodOn(TodoController.class).findTodoById(p.id().toString())).withSelfRel()));
+
         return ResponseEntity.ok(todos);
     }
 
@@ -56,6 +58,8 @@ public class TodoController {
         var entity =  todoService.findTodoById(id);
 
         ResponseDto responseDto = new ResponseDto(entity.getId(), entity.getName(), entity.getDescription(), entity.getStatus(), entity.getCreatedAt());
+
+        responseDto.add(linkTo(methodOn(TodoController.class).findTodoById(stringId)).withSelfRel());
 
         return ResponseEntity.ok(responseDto);
     }
@@ -83,6 +87,8 @@ public class TodoController {
         TodoEntity entity = todoService.updateTodoById(id, req);
 
         ResponseDto responseDto = new ResponseDto(entity.getId(), entity.getName(), entity.getDescription(), entity.getStatus(), entity.getCreatedAt());
+
+        responseDto.add(linkTo(methodOn(TodoController.class).findTodoById(stringId)).withSelfRel());
 
         return ResponseEntity.ok(responseDto);
     }
