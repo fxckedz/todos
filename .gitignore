@@ -41,7 +41,7 @@ logs/
 .env
 *.properties
 *.yml (exceto application.yml, se necessário)
-/config/application-*.yml
+application.yml
 
 # --- Banco de Dados/Sistemas Externos ---
 *.db
