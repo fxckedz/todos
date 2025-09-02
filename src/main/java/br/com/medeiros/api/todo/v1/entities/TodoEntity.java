@@ -14,9 +14,10 @@ public class TodoEntity {
     public TodoEntity() {
     }
 
-    public TodoEntity(String name, String description) {
+    public TodoEntity(String name, String description, UserEntity user) {
         this.name = name;
         this.description = description;
+        this.user = user;
     }
 
     @Id @GeneratedValue(strategy = GenerationType.UUID)
@@ -31,6 +32,10 @@ public class TodoEntity {
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private TodoStatus status = TodoStatus.PENDING;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -70,6 +75,14 @@ public class TodoEntity {
 
     public void setStatus(TodoStatus status) {
         this.status = status;
+    }
+
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 
     public LocalDateTime getCreatedAt() {
