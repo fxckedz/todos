@@ -2,6 +2,7 @@ package br.com.medeiros.api.todo.v1.controllers;
 
 import br.com.medeiros.api.todo.v1.data.RequestUpdateTodoByIdDto;
 import br.com.medeiros.api.todo.v1.entities.TodoEntity;
+import br.com.medeiros.api.todo.v1.entities.UserEntity;
 import br.com.medeiros.api.todo.v1.exceptions.ExceptionResponse;
 import br.com.medeiros.api.todo.v1.services.TodoService;
 import br.com.medeiros.api.todo.v1.data.RequestCreateTodoDto;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -45,12 +47,16 @@ public class TodoController {
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
             })
-    public ResponseEntity<ResponseDto> createTodo(@Valid @RequestBody RequestCreateTodoDto requestCreateTodoDto) {
-        var todo = todoService.createTodo(requestCreateTodoDto);
+    public ResponseEntity<ResponseDto> createTodo(
+            @Valid @RequestBody RequestCreateTodoDto requestCreateTodoDto,
+            @AuthenticationPrincipal UserEntity user) {
+
+        var todo = todoService.createTodo(requestCreateTodoDto, user);
 
         var responseDto = ResponseDto.fromEntity(todo);
 
-        return ResponseEntity.created(URI.create("/api/todos/v1/" + responseDto.id())).body(responseDto);
+        return ResponseEntity.created(URI.create("/api/todos/v1/" + responseDto.id()))
+                .body(responseDto);
     }
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML})
@@ -67,17 +73,21 @@ public class TodoController {
                     @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content)
             })
-    public ResponseEntity<List<ResponseDto>> findAllTodos() {
+    public ResponseEntity<List<ResponseDto>> findAllTodos(@AuthenticationPrincipal UserEntity user) {
 
-        var todoEntities = todoService.findAllTodos();
+        var todoEntities = todoService.findAllTodos(user);
 
         if (todoEntities.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        var todos = todoEntities.stream().map(ResponseDto::fromEntity).toList();
+        var todos = todoEntities.stream()
+                .map(ResponseDto::fromEntity)
+                .toList();
 
-        todos.forEach(p -> p.add(linkTo(methodOn(TodoController.class).findTodoById(p.id().toString())).withSelfRel()));
+        todos.forEach(p -> p.add(linkTo(methodOn(TodoController.class)
+                .findTodoById(p.id().toString(), user))
+                .withSelfRel()));
 
         return ResponseEntity.ok(todos);
     }
@@ -94,15 +104,19 @@ public class TodoController {
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
             })
-    public ResponseEntity<ResponseDto> findTodoById(@PathVariable String stringId) {
+    public ResponseEntity<ResponseDto> findTodoById(
+            @PathVariable String stringId,
+            @AuthenticationPrincipal UserEntity user) {
 
         UUID id = UUID.fromString(stringId);
 
-        var entity = todoService.findTodoById(id);
+        var entity = todoService.findTodoById(id, user);
 
-        ResponseDto responseDto = new ResponseDto(entity.getId(), entity.getName(), entity.getDescription(), entity.getStatus(), entity.getCreatedAt());
+        ResponseDto responseDto = ResponseDto.fromEntity(entity);
 
-        responseDto.add(linkTo(methodOn(TodoController.class).findTodoById(stringId)).withSelfRel());
+        responseDto.add(linkTo(methodOn(TodoController.class)
+                .findTodoById(stringId, user))
+                .withSelfRel());
 
         return ResponseEntity.ok(responseDto);
     }
@@ -114,11 +128,13 @@ public class TodoController {
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             })
-    public ResponseEntity<Void> deleteTodoById(@PathVariable String stringId) {
+    public ResponseEntity<Void> deleteTodoById(
+            @PathVariable String stringId,
+            @AuthenticationPrincipal UserEntity user) {
 
         UUID id = UUID.fromString(stringId);
 
-        todoService.deleteTodoById(id);
+        todoService.deleteTodoById(id, user);
 
         return ResponseEntity.ok().build();
     }
@@ -138,15 +154,18 @@ public class TodoController {
             })
     public ResponseEntity<ResponseDto> updateTodoById(
             @PathVariable String stringId,
-            @RequestBody RequestUpdateTodoByIdDto req) {
+            @RequestBody RequestUpdateTodoByIdDto req,
+            @AuthenticationPrincipal UserEntity user) {
 
         UUID id = UUID.fromString(stringId);
 
-        TodoEntity todo = todoService.updateTodoById(id, req);
+        TodoEntity todo = todoService.updateTodoById(id, req, user);
 
         ResponseDto responseDto = ResponseDto.fromEntity(todo);
 
-        responseDto.add(linkTo(methodOn(TodoController.class).findTodoById(stringId)).withSelfRel());
+        responseDto.add(linkTo(methodOn(TodoController.class)
+                .findTodoById(stringId, user))
+                .withSelfRel());
 
         return ResponseEntity.ok(responseDto);
     }
