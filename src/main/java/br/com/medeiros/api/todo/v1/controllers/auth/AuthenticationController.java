@@ -1,4 +1,4 @@
-package br.com.medeiros.api.todo.v1.controllers;
+package br.com.medeiros.api.todo.v1.controllers.auth;
 
 import br.com.medeiros.api.todo.v1.data.LoginDto;
 import br.com.medeiros.api.todo.v1.data.LoginResponse;
@@ -9,11 +9,14 @@ import br.com.medeiros.api.todo.v1.jwt.JwtUtil;
 import br.com.medeiros.api.todo.v1.repositories.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/todos/v1/auth")
@@ -31,8 +34,9 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto dto) {
-        UserEntity user = userRepository.findByUsername(dto.username())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        UserEntity user = userRepository.findByUsername(dto.username()).
+                orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+
 
         if (!passwordEncoder.matches(dto.password(), user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");

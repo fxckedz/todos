@@ -10,7 +10,6 @@ import br.com.medeiros.api.todo.v1.repositories.TodoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
