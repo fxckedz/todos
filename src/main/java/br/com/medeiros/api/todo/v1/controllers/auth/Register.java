@@ -4,8 +4,15 @@ import br.com.medeiros.api.todo.v1.data.LoginResponse;
 import br.com.medeiros.api.todo.v1.data.RegisterDto;
 import br.com.medeiros.api.todo.v1.entities.UserEntity;
 import br.com.medeiros.api.todo.v1.enums.Role;
+import br.com.medeiros.api.todo.v1.exceptions.ExceptionResponse;
 import br.com.medeiros.api.todo.v1.jwt.JwtUtil;
 import br.com.medeiros.api.todo.v1.repositories.UserRepository;
+import br.com.medeiros.api.todo.v1.util.MediaType;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +34,19 @@ public class Register {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public ResponseEntity<?> register(@RequestBody RegisterDto dto) {
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML},
+                 produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML})
+
+    @Operation(
+            summary = "Register a new user",
+            description = "Register a new User by passing JSON, XML or YAML",
+            tags = {"Authentication"},
+            responses = {
+                    @ApiResponse(description = "User successfully created", responseCode = "201", content =  @Content(schema = @Schema(type = "string", example = "token=eyJhbGciOiJIUzI1..."))),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+            })
+    public ResponseEntity<?> register(@RequestBody @Valid RegisterDto dto) {
         if(userRepository.findByUsername(dto.username()).isPresent()) {
             return ResponseEntity.badRequest().body("Username already exists");
         }
