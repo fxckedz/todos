@@ -35,11 +35,12 @@ public class TodoCreate {
     @PostMapping(consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML},
                  produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML})
 
-    @Operation(summary = "Create a new Todo",
+    @Operation(
+            summary = "Create a new Todo",
             description = "Create a new Todo by passing JSON, XML or YAML",
             tags = {"Todos"},
             responses = {
-                    @ApiResponse(description = "Created", responseCode = "201", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+                    @ApiResponse(description = "Todo successfully created", responseCode = "201", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
             })

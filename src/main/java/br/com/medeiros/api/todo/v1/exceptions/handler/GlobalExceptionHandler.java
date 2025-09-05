@@ -7,6 +7,7 @@ import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NullIdException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -53,6 +54,18 @@ public class GlobalExceptionHandler {
                 .body(new ExceptionResponse(
                         new Date(),
                         ex.getStatus(),
+                        ex.getMessage()
+                ));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleUsernameNotFoundException(UsernameNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ExceptionResponse(
+                        new Date(),
+                        HttpStatus.BAD_REQUEST,
                         ex.getMessage()
                 ));
     }

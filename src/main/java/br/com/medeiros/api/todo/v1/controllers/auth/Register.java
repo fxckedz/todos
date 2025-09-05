@@ -1,53 +1,32 @@
 package br.com.medeiros.api.todo.v1.controllers.auth;
 
-import br.com.medeiros.api.todo.v1.data.LoginDto;
 import br.com.medeiros.api.todo.v1.data.LoginResponse;
 import br.com.medeiros.api.todo.v1.data.RegisterDto;
 import br.com.medeiros.api.todo.v1.entities.UserEntity;
 import br.com.medeiros.api.todo.v1.enums.Role;
 import br.com.medeiros.api.todo.v1.jwt.JwtUtil;
 import br.com.medeiros.api.todo.v1.repositories.UserRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 @RestController
-@RequestMapping("/api/todos/v1/auth")
-public class AuthenticationController {
+@RequestMapping("/api/todos/v1/auth/register")
+public class Register {
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private PasswordEncoder passwordEncoder;
 
-    public AuthenticationController(UserRepository userRepository, JwtUtil jwtUtil, PasswordEncoder passwordEncoder) {
+    public Register(UserRepository userRepository, JwtUtil jwtUtil, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDto dto) {
-        UserEntity user = userRepository.findByUsername(dto.username()).
-                orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
-
-
-        if (!passwordEncoder.matches(dto.password(), user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-        }
-
-        String token = jwtUtil.generateToken(user);
-
-        return ResponseEntity.ok(new LoginResponse(token));
-    }
-
-    @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterDto dto) {
         if(userRepository.findByUsername(dto.username()).isPresent()) {
             return ResponseEntity.badRequest().body("Username already exists");
@@ -64,4 +43,5 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(new LoginResponse(token));
     }
+
 }

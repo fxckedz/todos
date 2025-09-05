@@ -1,11 +1,8 @@
 package br.com.medeiros.api.todo.v1.controllers.todo;
 
-import br.com.medeiros.api.todo.v1.data.ResponseDto;
 import br.com.medeiros.api.todo.v1.entities.UserEntity;
 import br.com.medeiros.api.todo.v1.services.TodoService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +31,7 @@ public class TodoDeleteById {
             description = "Delete todo by id",
             tags = {"Todos"},
             responses = {
-                    @ApiResponse(description = "Success", responseCode = "200", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+                    @ApiResponse(description = "Success", responseCode = "200"),
             })
 
     public ResponseEntity<Void> deleteById(

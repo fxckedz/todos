@@ -23,7 +23,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api/todos/v1")
-@Tag(name = "FindAll", description = "Finfd all todos")
+@Tag(name = "FindAll", description = "Find all todos")
 public class TodoFindAll {
 
     private TodoService todoService;

@@ -32,7 +32,13 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/todos/v1/auth/**").permitAll()
+                        .requestMatchers(
+                                "/api/todos/v1/auth/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs.yaml",
+                                "/v3/api-docs.json").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
