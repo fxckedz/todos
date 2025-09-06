@@ -4,9 +4,9 @@ spring:
       ddl-auto: update
     show-sql: true
   datasource:
-    url: jdbc:mysql://localhost:3306/todo
-    username: ${DB_USER:changeme}
-    password: ${DB_PASSWORD:changeme}
+    url: jdbc:mysql://localhost:3306/mydatabase
+    username: myuser
+    password: mypassword
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 spring-doc:
@@ -18,3 +18,6 @@ cors:
   originPatterns:
     - http://example1:0000
     - https://example.com.br
+
+jwt:
+  secret: d90b2fa69a24fb813194afe9a323541a
