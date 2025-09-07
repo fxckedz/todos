@@ -44,7 +44,7 @@ class TodoServiceTest {
             when(repository.save(any(TodoEntity.class)))
                     .thenAnswer(invocation -> {
                         TodoEntity todo = invocation.getArgument(0);
-                        todo.setId(UUID.randomUUID());
+                        todo.setId(1L);
                         todo.setCreatedAt(LocalDateTime.now());
                         todo.setUpdatedAt(LocalDateTime.now());
                         return todo;
@@ -71,7 +71,7 @@ class TodoServiceTest {
             when(repository.save(any(TodoEntity.class)))
                     .thenAnswer(invocation -> {
                         TodoEntity todo = invocation.getArgument(0);
-                        todo.setId(UUID.randomUUID());
+                        todo.setId(1L);
                         return todo;
                     });
 

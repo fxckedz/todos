@@ -60,9 +60,10 @@ public class TodoFindAll {
                 .map(ResponseDto::fromEntity)
                 .toList();
 
-        todos.forEach(p -> p.add(linkTo(methodOn(TodoFindAll.class)
-                .findAll(user))
+        todos.forEach(todo -> todo.add(linkTo(methodOn(TodoFindById.class)
+                .findById(todo.id(), user))
                 .withSelfRel()));
+
 
         return ResponseEntity.ok(todos);
     }

@@ -24,7 +24,7 @@ import org.springframework.hateoas.RepresentationModel;
 public final class ResponseDto extends RepresentationModel<ResponseDto> {
 
     @JsonProperty("id")
-    private final UUID id;
+    private final Long id;
 
     @JsonProperty("name")
     private final String name;
@@ -38,7 +38,7 @@ public final class ResponseDto extends RepresentationModel<ResponseDto> {
     @JsonProperty("createdAt")
     private final LocalDateTime createdAt;
 
-    public ResponseDto(UUID id, String name, String description, TodoStatus status, LocalDateTime createdAt) {
+    public ResponseDto(Long id, String name, String description, TodoStatus status, LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -46,7 +46,7 @@ public final class ResponseDto extends RepresentationModel<ResponseDto> {
         this.createdAt = createdAt;
     }
 
-    public UUID id() {
+    public Long id() {
         return id;
     }
 

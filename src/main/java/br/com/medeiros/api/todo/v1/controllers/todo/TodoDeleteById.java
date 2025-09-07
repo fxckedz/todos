@@ -25,7 +25,7 @@ public class TodoDeleteById {
         this.todoService = todoService;
     }
 
-    @DeleteMapping("/{stringId}")
+    @DeleteMapping("/{id}")
 
     @Operation(summary = "Delete todo by id",
             description = "Delete todo by id",
@@ -35,10 +35,8 @@ public class TodoDeleteById {
             })
 
     public ResponseEntity<Void> deleteById(
-            @PathVariable String stringId,
+            @PathVariable Long id,
             @AuthenticationPrincipal UserEntity user) {
-
-        UUID id = UUID.fromString(stringId);
 
         todoService.deleteTodoById(id, user);
 

@@ -32,7 +32,7 @@ public class TodoUpdateById {
         this.todoService = todoService;
     }
 
-    @PutMapping(value = "/{stringId}",
+    @PutMapping(value = "/{id}",
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML},
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML}
     )
@@ -48,18 +48,16 @@ public class TodoUpdateById {
             })
 
     public ResponseEntity<ResponseDto> updateTodoById(
-            @PathVariable String stringId,
+            @PathVariable Long id,
             @RequestBody RequestUpdateTodoByIdDto req,
             @AuthenticationPrincipal UserEntity user) {
-
-        UUID id = UUID.fromString(stringId);
 
         TodoEntity todo = todoService.updateTodoById(id, req, user);
 
         ResponseDto responseDto = ResponseDto.fromEntity(todo);
 
         responseDto.add(linkTo(methodOn(TodoFindById.class)
-                .findById(stringId, user))
+                .findById(id, user))
                 .withSelfRel());
 
         return ResponseEntity.ok(responseDto);

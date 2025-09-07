@@ -33,7 +33,7 @@ public class TodoFindById {
         this.todoService = todoService;
     }
 
-    @GetMapping(value = "/{stringId}",
+    @GetMapping(value = "/{id}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YAML}
     )
     @Operation(summary = "Find todo by id",
@@ -46,10 +46,8 @@ public class TodoFindById {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
             })
     public ResponseEntity<ResponseDto> findById(
-            @PathVariable String stringId,
+            @PathVariable Long id,
             @AuthenticationPrincipal UserEntity user) {
-
-        UUID id = UUID.fromString(stringId);
 
         var entity = todoService.findTodoById(id, user);
 
@@ -58,7 +56,7 @@ public class TodoFindById {
         ResponseDto responseDto = ResponseDto.fromEntity(entity);
 
         responseDto.add(linkTo(methodOn(TodoFindById.class)
-                .findById(stringId, user))
+                .findById(id, user))
                 .withSelfRel());
 
         return ResponseEntity.ok(responseDto);

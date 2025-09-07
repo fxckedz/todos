@@ -36,7 +36,7 @@ public class TodoService {
         return todoRepository.findByUser(user);
     }
 
-    public TodoEntity findTodoById(UUID id, UserEntity user){
+    public TodoEntity findTodoById(Long id, UserEntity user){
         TodoEntity todo = todoRepository.findById(id)
                 .orElseThrow(NotFoundId::new);
 
@@ -47,13 +47,13 @@ public class TodoService {
         return todo;
     }
 
-    public void deleteTodoById(UUID id, UserEntity user) {
+    public void deleteTodoById(Long id, UserEntity user) {
         TodoEntity todo = findTodoById(id, user);
         todoRepository.delete(todo);
     }
 
-    public TodoEntity updateTodoById(UUID id, RequestUpdateTodoByIdDto req, UserEntity user){
-        TodoEntity todo = findTodoById(id, user); // valida dono
+    public TodoEntity updateTodoById(Long id, RequestUpdateTodoByIdDto req, UserEntity user){
+        TodoEntity todo = findTodoById(id, user);
 
         if (req.name() != null) todo.setName(req.name());
         if (req.description() != null) todo.setDescription(req.description());
