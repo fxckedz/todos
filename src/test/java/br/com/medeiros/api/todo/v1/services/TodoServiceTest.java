@@ -5,6 +5,7 @@ import br.com.medeiros.api.todo.v1.entities.TodoEntity;
 import br.com.medeiros.api.todo.v1.entities.UserEntity;
 import br.com.medeiros.api.todo.v1.enums.Role;
 import br.com.medeiros.api.todo.v1.enums.TodoStatus;
+import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NullIdException;
 import br.com.medeiros.api.todo.v1.repositories.TodoRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -30,7 +31,6 @@ class TodoServiceTest {
 
     @InjectMocks
     private TodoService service;
-
 
     @Nested
     @DisplayName("When Create Todo")
@@ -100,7 +100,21 @@ class TodoServiceTest {
             );
         }
 
+        @Test
+        @DisplayName("Should throw NullIdException when saved todo has null ID")
+        void shouldThrowNullIdExceptionWhenIdIsNull() {
+            UserEntity user = new UserEntity("valid_user", "valid_pass", Role.USER);
 
+            when(repository.save(any(TodoEntity.class)))
+                    .thenAnswer(invocation -> {
+                        TodoEntity todo = invocation.getArgument(0);
+                        return todo;
+                    });
+
+            assertThrows(NullIdException.class, () ->
+                    service.createTodo(new RequestCreateTodoDto("title", "description"), user)
+            );
+        }
 
     }
 
