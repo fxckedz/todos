@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -50,8 +48,6 @@ public class TodoFindById {
             @AuthenticationPrincipal UserEntity user) {
 
         var entity = todoService.findTodoById(id, user);
-
-        System.out.println("USER = " + user);
 
         ResponseDto responseDto = ResponseDto.fromEntity(entity);
 

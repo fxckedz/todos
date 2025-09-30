@@ -14,11 +14,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.net.URI;
 
@@ -53,6 +54,8 @@ public class TodoCreate {
         var todo = todoService.createTodo(requestCreateTodoDto, user);
 
         var responseDto = ResponseDto.fromEntity(todo);
+
+        responseDto.add(linkTo(methodOn(TodoCreate.class).createTodo(requestCreateTodoDto, user)).withSelfRel());
 
         return ResponseEntity.created(URI.create("/api/todos/v1/" + responseDto.id()))
                 .body(responseDto);
