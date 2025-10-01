@@ -51,9 +51,30 @@ public class TodoFindById {
 
         ResponseDto responseDto = ResponseDto.fromEntity(entity);
 
-        responseDto.add(linkTo(methodOn(TodoFindById.class)
-                .findById(id, user))
-                .withSelfRel());
+        responseDto.addAction("self",
+                linkTo(methodOn(TodoFindById.class).findById(responseDto.id(), user)).toString(),
+                "GET",
+                "get a single TODO");
+
+        responseDto.addAction("create",
+                linkTo(methodOn(TodoCreate.class).createTodo(null, user)).toString(),
+                "POST",
+                "create a new TODO");
+
+        responseDto.addAction("update",
+                linkTo(methodOn(TodoUpdateById.class).updateTodoById(responseDto.id(), null, user)).toString(),
+                "PUT",
+                "update this TODO");
+
+        responseDto.addAction("get all",
+                linkTo(methodOn(TodoFindAll.class).findAll(user)).toString(),
+                "GET",
+                "get all TODOS");
+
+        responseDto.addAction("delete",
+                linkTo(methodOn(TodoDeleteById.class).deleteById(responseDto.id(), user)).toString(),
+                "DELETE",
+                "delete this TODO");
 
         return ResponseEntity.ok(responseDto);
     }
