@@ -1,6 +1,8 @@
 package br.com.medeiros.api.todo.v1.data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -17,7 +19,7 @@ import org.springframework.hateoas.RepresentationModel;
         "description",
         "status",
         "createdAt",
-        "links"
+        "actions"
 })
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -38,13 +40,26 @@ public final class ResponseDto extends RepresentationModel<ResponseDto> {
     @JsonProperty("createdAt")
     private final LocalDateTime createdAt;
 
+    @JsonProperty("actions")
+    private final List<EnhancedLink> actions;
+
     public ResponseDto(Long id, String name, String description, TodoStatus status, LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
         this.createdAt = createdAt;
+        this.actions = new ArrayList<>();
     }
+
+    public void addAction(String rel, String href, String method, String description) {
+        this.actions.add(new EnhancedLink(rel, href, method, description));
+    }
+
+    public void addAction(String rel, String href, String method) {
+        this.actions.add(new EnhancedLink(rel, href, method, null));
+    }
+
 
     public Long id() {
         return id;
@@ -65,6 +80,8 @@ public final class ResponseDto extends RepresentationModel<ResponseDto> {
     public LocalDateTime createdAt() {
         return createdAt;
     }
+
+    public List<EnhancedLink> getActions() { return actions; }
 
     @Override
     public boolean equals(Object obj) {

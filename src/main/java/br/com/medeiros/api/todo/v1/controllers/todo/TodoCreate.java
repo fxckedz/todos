@@ -55,7 +55,32 @@ public class TodoCreate {
 
         var responseDto = ResponseDto.fromEntity(todo);
 
-        responseDto.add(linkTo(methodOn(TodoCreate.class).createTodo(requestCreateTodoDto, user)).withSelfRel());
+        responseDto.addAction("self",
+                linkTo(methodOn(TodoCreate.class).createTodo(null, user)).toString(),
+                "POST",
+                "create a new TODO");
+
+        responseDto.addAction("update",
+                linkTo(methodOn(TodoUpdateById.class).updateTodoById(responseDto.id(), null, user)).toString(),
+                "PUT",
+                "update this TODO");
+
+        responseDto.addAction("get",
+                linkTo(methodOn(TodoFindById.class).findById(responseDto.id(), user)).toString(),
+                "GET",
+                "get a single TODO");
+
+        responseDto.addAction("get all",
+                linkTo(methodOn(TodoFindAll.class).findAll(user)).toString(),
+                "GET",
+                "get all TODOS");
+
+        responseDto.addAction("delete",
+                linkTo(methodOn(TodoDeleteById.class).deleteById(responseDto.id(), user)).toString(),
+                "DELETE",
+                "delete this TODO");
+
+
 
         return ResponseEntity.created(URI.create("/api/todos/v1/" + responseDto.id()))
                 .body(responseDto);
