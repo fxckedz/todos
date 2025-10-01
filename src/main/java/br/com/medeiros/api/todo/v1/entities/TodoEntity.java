@@ -20,6 +20,13 @@ public class TodoEntity {
         this.user = user;
     }
 
+    public TodoEntity(Long id, String name, String description, UserEntity user) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.user = user;
+    }
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

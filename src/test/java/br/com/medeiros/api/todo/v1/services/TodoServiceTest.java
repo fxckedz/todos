@@ -5,6 +5,7 @@ import br.com.medeiros.api.todo.v1.entities.TodoEntity;
 import br.com.medeiros.api.todo.v1.entities.UserEntity;
 import br.com.medeiros.api.todo.v1.enums.Role;
 import br.com.medeiros.api.todo.v1.enums.TodoStatus;
+import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NotFoundId;
 import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NullIdException;
 import br.com.medeiros.api.todo.v1.repositories.TodoRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,10 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -59,9 +57,7 @@ class TodoServiceTest {
                 return todo;
             });
 
-       
             TodoEntity created = service.createTodo(validRequest, user);
-
 
             assertAll("Fields validation", () -> assertEquals("valid_title", created.getName(), "Nome deve vir do DTO"), () -> assertEquals("valid_description", created.getDescription(), "Descrição deve vir do DTO"), () -> assertEquals(TodoStatus.PENDING, created.getStatus(), "Status deve ser PENDING por padrão"), () -> assertEquals(user, created.getUser(), "User deve ser o passado como argumento"));
 
@@ -101,7 +97,7 @@ class TodoServiceTest {
         @DisplayName("Should throw NullIdException when repository returns todo without ID")
         void shouldThrowNullIdExceptionWhenIdIsNull() {
 
-            when(repository.save(any(TodoEntity.class))).thenReturn(new TodoEntity()); // Retorna objeto sem ID
+            when(repository.save(any(TodoEntity.class))).thenReturn(new TodoEntity());
 
 
             assertThrows(NullIdException.class, () -> service.createTodo(validRequest, user));
@@ -148,7 +144,7 @@ class TodoServiceTest {
         @Test
         @DisplayName("Should return an empty list")
         void ShouldReturnsEmptyList() {
-            // Arrange
+
             UserEntity user = new UserEntity("user_name", "user_pass", Role.USER);
             when(repository.findByUser(user)).thenReturn(Collections.emptyList());
 
@@ -172,6 +168,78 @@ class TodoServiceTest {
             });
 
             verify(repository).findByUser(user);
+        }
+    }
+
+    @Nested
+    @DisplayName("When A Todo By Id")
+    class FindTodoByIdTest {
+
+        @Test
+        @DisplayName("Should Return NotFoundId if Invalid ID")
+        void ShouldReturnNotFoundId(){
+
+            UserEntity user = new UserEntity("user_name", "user_pass", Role.USER);
+
+            when(repository.findById(any())).thenReturn(Optional.empty());
+
+            assertThrows(NotFoundId.class, () -> {
+                service.findTodoById(null, user);
+            });
+        }
+
+        @Test
+        @DisplayName("Should Return Todo When Todo Belongs To User")
+        void shouldReturnTodoWhenTodoBelongsToUser() {
+
+            Long todoId = 1L;
+            Long userId = 1L;
+            UserEntity user = new UserEntity(userId, "user_name", "user_pass", Role.USER);
+            UserEntity todoOwner = new UserEntity(userId, "user_name", "user_pass", Role.USER);
+            TodoEntity expectedTodo = new TodoEntity(todoId, "Test Todo", "test desc", todoOwner);
+
+            when(repository.findById(todoId)).thenReturn(Optional.of(expectedTodo));
+
+            TodoEntity result = service.findTodoById(todoId, user);
+
+            assertEquals(expectedTodo, result);
+            verify(repository).findById(todoId);
+        }
+
+        @Test
+        @DisplayName("Should Throw NotFoundId When Todo Does Not Belong To User")
+        void shouldThrowNotFoundIdWhenTodoDoesNotBelongToUser() {
+
+            Long todoId = 1L;
+            UserEntity currentUser = new UserEntity(1L, "current_user", "pass", Role.USER);
+            UserEntity otherUser = new UserEntity(2L, "other_user", "pass", Role.USER);
+            TodoEntity todoFromOtherUser = new TodoEntity(todoId, "Other Todo", "Other's Todo", otherUser);
+
+            when(repository.findById(todoId)).thenReturn(Optional.of(todoFromOtherUser));
+
+            assertThrows(NotFoundId.class, () -> {
+                service.findTodoById(todoId, currentUser);
+            });
+
+            verify(repository).findById(todoId);
+        }
+
+        @Test
+        @DisplayName("Should Propagate Repository Exception When FindById Fails")
+        void shouldPropagateRepositoryExceptionWhenFindByIdFails() {
+
+            Long todoId = 1L;
+            UserEntity user = new UserEntity("user_name", "user_pass", Role.USER);
+            String errorMessage = "Database connection failed";
+
+            when(repository.findById(todoId)).thenThrow(new RuntimeException(errorMessage));
+
+            RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+                service.findTodoById(todoId, user);
+            });
+
+            assertEquals(errorMessage, exception.getMessage());
+            verify(repository).findById(todoId);
         }
     }
 }

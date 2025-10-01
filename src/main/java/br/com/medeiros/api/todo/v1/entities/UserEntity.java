@@ -21,6 +21,13 @@ public class UserEntity {
         this.role = role;
     }
 
+    public UserEntity(Long id,String username, String password, Role role) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
