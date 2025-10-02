@@ -16,8 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -241,5 +239,29 @@ class TodoServiceTest {
             assertEquals(errorMessage, exception.getMessage());
             verify(repository).findById(todoId);
         }
+    }
+    @Nested
+    @DisplayName("When Delete a Todo By Id")
+    class DeleteTodoByIdTest {
+
+        @Test
+        @DisplayName("Should Delete Todo When Todo exists and User Is Owner")
+        void ShouldDeleteTodo_WhenTodoExistsAndUserIsOwner() {
+
+            var todoId = 1L;
+            UserEntity user = new UserEntity("username", "pass", Role.USER);
+            user.setId(todoId);
+
+            TodoEntity todo = new TodoEntity();
+            todo.setId(todoId);
+            todo.setUser(user);
+
+            when(repository.findById(todoId)).thenReturn(java.util.Optional.of(todo));
+
+            service.deleteTodoById(todoId, user);
+
+            verify(repository, times(1)).delete(todo);
+        }
+
     }
 }
