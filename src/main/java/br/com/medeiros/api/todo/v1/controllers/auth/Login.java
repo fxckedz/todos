@@ -2,7 +2,6 @@ package br.com.medeiros.api.todo.v1.controllers.auth;
 
 import br.com.medeiros.api.todo.v1.data.LoginDto;
 import br.com.medeiros.api.todo.v1.data.LoginResponse;
-import br.com.medeiros.api.todo.v1.data.ResponseDto;
 import br.com.medeiros.api.todo.v1.entities.UserEntity;
 import br.com.medeiros.api.todo.v1.exceptions.ExceptionResponse;
 import br.com.medeiros.api.todo.v1.jwt.JwtUtil;
