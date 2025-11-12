@@ -1,0 +1,33 @@
+services:
+  app:
+    image: todos:v1
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/mydatabase
+      - SPRING_DATASOURCE_USERNAME=myuser
+      - SPRING_DATASOURCE_PASSWORD=mypassword
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRINGDOC_PATHS_TO_MATCH=/api/**/v1/**
+      - SPRINGDOC_SWAGGER_UI_USE_ROOT_PATH=true
+      - CORS_ORIGINPATTERNS=http://example1:0000,https://example.com.br
+      - JWT_SECRET=d90b2fa69a24fb813194afe9a323541a
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=mydatabase
+      - MYSQL_USER=myuser
+      - MYSQL_PASSWORD=mypassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
