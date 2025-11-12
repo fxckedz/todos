@@ -26,7 +26,17 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+
         var allowedOrigins = corsOriginPatterns.split(",");
+
+        String[] publicEndpoints = {"/actuator/health", "/"};
+        for(String endpoint: publicEndpoints) {
+            registry.addMapping(endpoint)
+                    .allowedMethods("GET", "OPTIONS")
+                    .allowedOrigins("*")
+                    .allowCredentials(false);
+        }
+
         registry.addMapping("/**")
                 .allowedMethods("*")
                 .allowedOrigins(allowedOrigins)
