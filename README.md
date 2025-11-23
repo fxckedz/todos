@@ -1,7 +1,6 @@
 # 📌 Todos API — Spring Boot
 
-A RESTful API for managing tasks with **authentication**, **authorization**, and **JWT** support.  
-Designed with best practices, strong security.
+A secure and scalable REST API for task management, featuring **authentication**, **authorization**, and **JWT tokens**, built with modern Spring Boot best practices.
 
 ---
 
@@ -16,61 +15,60 @@ Designed with best practices, strong security.
 - JWT (JSON Web Tokens)
 
 ### **Database**
-- MySQL
+- MySQL 8
 
 ### **Testing**
-- JUnit 5
+- JUnit 5  
 - Mockito
 
 ### **Tools**
-- Maven
-- Docker (optional)
-- Swagger / Springdoc OpenAPI
+- Maven  
+- Docker  
+- Swagger / Springdoc OpenAPI  
 
 ---
 
-# 📚 Project Overview
+## 📚 Project Description
 
-The **Todos API** allows users to register, authenticate, receive JWT tokens, and interact with protected endpoints to create, update, list, and delete tasks.
+**Task Manager API** allows users to register, authenticate using JWT, and manage tasks with protected endpoints.
 
 This project demonstrates:
-- Modern Spring Boot development
-- Secure authentication with JWT
-- Clean REST architecture
-- Separation of concerns
-- Well-structured codebase for scalability
+
+- Advanced Spring Boot usage  
+- Secure authentication and authorization  
+- Clean and scalable REST architecture  
+- Separation of layers  
+- Professional-level project structure  
 
 ---
 
-# 🔐 Authentication & Security
+## 🔐 Authentication Flow (JWT)
 
-The API uses **JWT authentication**.
-
-### **Authentication Flow**
-1. User sends email and password  
-2. API validates credentials  
-3. API returns a JWT token  
-4. All protected routes require:
+1. User sends email + password  
+2. Server validates credentials  
+3. A JWT token is generated and returned  
+4. All protected endpoints must include:
 
 ```
 
-Authorization: Bearer <your_jwt_token>
+Authorization: Bearer <your_token>
 
 ````
 
 ---
 
-# 🌐 API Endpoints  
-**Public vs Protected Routes**
+# 🌐 API Endpoints — Public & Protected Routes
+
+Below is the complete list of API endpoints.
 
 ---
 
 ## 🟢 Public Routes (No Authentication Required)
 
 ### **POST /api/todos/v1/auth/register**
-Register a new user.
+Create a new user account.
 
-**Request Body Example**
+**Body Example:**
 ```json
 {
   "email": "matheus@email.com",
@@ -78,13 +76,11 @@ Register a new user.
 }
 ````
 
----
-
 ### **POST /api/todos/v1/auth/login**
 
-Login with an existing user.
+Authenticate a registered user.
 
-**Request Body Example**
+**Body Example:**
 
 ```json
 {
@@ -95,15 +91,11 @@ Login with an existing user.
 
 ---
 
-## 🔴 Protected Routes (Authentication Required)
-
-All protected endpoints require a valid JWT.
+## 🔴 Protected Routes (JWT Required)
 
 ### **POST /api/todos/v1**
 
 Create a new task.
-
-**Request Body Example**
 
 ```json
 {
@@ -117,8 +109,6 @@ Create a new task.
 ### **PUT /api/todos/v1/{id}**
 
 Update an existing task.
-
-**Request Body Example**
 
 ```json
 {
@@ -134,184 +124,215 @@ Update an existing task.
 
 Delete a task.
 
+(No body required)
+
 ---
 
 ### **GET /api/todos/v1**
 
-Retrieve all tasks of the authenticated user.
+Retrieve all tasks.
 
 ---
 
 ### **GET /api/todos/v1/{id}**
 
-Retrieve a task by its ID.
+Retrieve a task by ID.
 
 ---
 
-# 🏗️ Project Architecture
+# 📘 Swagger Documentation
 
-The project follows a clean and modular architecture.
+Swagger UI is available at:
 
-```
-src/main/java/com/project/
-├── config
-├── controllers
-├── data
-├── entities
-├── enums
-├── exceptions
-├── jwt
-├── repositories
-├── security
-├── serialization/converter
-├── services
-└── util
-```
+👉 **[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)**
+or
+👉 **[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)**
 
 ---
 
-# 🧩 Module Descriptions
+# 🧩 Project Architecture
 
 ### **📂 config**
 
-Application configuration:
-
-* Security settings
-* Public/protected route definitions
-* General application setup
-
----
+Security configurations, CORS, filters, and global settings.
 
 ### **📂 controllers**
 
-REST controllers responsible for:
-
-* Handling HTTP requests
-* Returning responses
-* Delegating logic to services
-
----
+REST controllers responsible for request handling.
 
 ### **📂 data**
 
-Contains DTOs, response objects, and data formatting utilities:
-
-* Standardized output
-* Clean request/response contract
-* Abstraction between entity and API layers
-
----
+DTOs and response models for communication.
 
 ### **📂 entities**
 
-JPA entities representing database tables:
-
-* `UserEntity`
-* `TodoEntity`
-
-Includes relationships and mappings.
-
----
+JPA entities representing database tables.
 
 ### **📂 enums**
 
-Contains constants such as:
-
-* User roles (`USER`, `ADMIN`)
-* Task statuses
-
----
+Enum types such as task status and user roles.
 
 ### **📂 exceptions**
 
-Custom exceptions and global exception handlers:
-
-* Centralized error messages
-* Clear API error responses
-* Handles validation, not found, unauthorized, etc.
-
----
+Global exception handling and custom error responses.
 
 ### **📂 jwt**
 
-JWT authentication module:
-
-* Token generation
-* Token validation
-* Authentication filters
-* User extraction
-
-Encapsulates all token-related logic.
-
----
+Token provider, JWT filter, validation utilities.
 
 ### **📂 repositories**
 
-Spring Data JPA repositories:
-
-* CRUD operations
-* Database queries
-
----
+JPA repositories for database access.
 
 ### **📂 security**
 
-Main security layer:
-
-* Spring Security configuration
-* Password encoding
-* Access control filters
-* Route protection
-
----
+Authentication/authorization configuration and password encoding.
 
 ### **📂 serialization/converter**
 
-Serialization utilities:
-
-* JSON/YAML converters
-* Custom Jackson serializers
-
----
+Custom serializers and format handlers.
 
 ### **📂 services**
 
-Business logic layer:
-
-* Validation
-* Task ownership checks
-* Processing and interaction between controllers and repositories
-
----
+Business logic (task rules, user ownership validation, etc.).
 
 ### **📂 util**
 
-Utility classes and helper functions shared across modules.
+Helper functions used across the project.
 
 ---
 
-# 🧠 Benefits of This Architecture
+# 🐳 Docker Support
 
-* **Highly organized structure**
-* **Strong separation of concerns**
-* **Easy to maintain and scale**
-* **Security isolated in its own modules**
-* **Test-friendly architecture**
-* **Professional-level code quality**
+This project includes full Docker support for both the application and MySQL.
 
 ---
 
+## 📦 Dockerfile (Multi-Stage Build)
+
+```dockerfile
+FROM maven:4.0.0-rc-4-eclipse-temurin-21-alpine AS build
+
+WORKDIR /app
+
+COPY pom.xml ./
+COPY src ./src
+
+RUN mvn clean package -DskipTests
+
+FROM eclipse-temurin:21-jre-alpine
+
+WORKDIR /app
+
+ARG JAR_FILE=target/*.jar
+COPY --from=build /app/${JAR_FILE} app.jar
+
+RUN adduser -D todouser
+RUN chown todouser:todouser /app
+
+USER todouser
+
+EXPOSE 8080
+
+CMD ["java", "-jar", "app.jar"]
+```
+
 ---
 
-# 📖 API Documentation (Swagger)
+## 🏗️ Building the Docker Image Manually
 
-The full interactive documentation for all routes is available at:
+If you want to build the image **before** running docker-compose:
 
-👉 **`/swagger-ui.html`** OR 
-👉 **`/`**  
-
-
-Use it to explore public and protected endpoints, send requests, and test JWT authentication directly from the browser.
+```bash
+docker build -t todos:v1 .
+```
 
 ---
 
+## 🐳 docker-compose.yml
+
+```yaml
+services:
+  app:
+    image: todos:v1
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/mydatabase
+      - SPRING_DATASOURCE_USERNAME=myuser
+      - SPRING_DATASOURCE_PASSWORD=mypassword
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRINGDOC_PATHS_TO_MATCH=/api/**/v1/**
+      - SPRINGDOC_SWAGGER_UI_USE_ROOT_PATH=true
+      - CORS_ORIGINPATTERNS=http://example1:0000,https://example.com.br
+      - JWT_SECRET=d90b2fa69a24fb813194afe9a323541a
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=mydatabase
+      - MYSQL_USER=myuser
+      - MYSQL_PASSWORD=mypassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
+```
+
+---
+
+## ▶️ Running the Application with Docker Compose
+
+### 1️⃣ Build all images (recommended)
+
+```bash
+docker compose build
+```
+
+### 2️⃣ Start containers
+
+```bash
+docker compose up
+```
+
+### 3️⃣ Access the API
+
+👉 [http://localhost:8080](http://localhost:8080)
+
+### 4️⃣ Access Swagger
+
+👉 [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+---
+
+## 🛑 Stopping the Containers
+
+```bash
+docker compose down
+```
+
+---
+
+## 💾 Persistent Database Storage
+
+MySQL uses a Docker volume:
+
+```
+mysql_data
+```
+
+Your data remains intact even after containers are removed.
+
+---
+
+# ✅ Final Notes
+
+This project follows a clean, scalable, and security-focused architecture suitable for real-world applications and portfolio presentation.
