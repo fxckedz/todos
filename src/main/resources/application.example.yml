@@ -1,23 +1,69 @@
+# ======================================================
+# SPRING BOOT CONFIGURATIONS - DEVELOPMENT ENVIRONMENT
+# ======================================================
+
 spring:
   jpa:
     hibernate:
+      # WARNING: 'update' should NOT be used in production!
+      # Options: validate | update | create | create-drop | none
+      # - update: updates schema, but can cause data loss
+      # - In production use: validate or controlled migrations (Flyway/Liquibase)
       ddl-auto: update
+    # Shows SQL in console - useful for development, disable in production
     show-sql: true
+  
   datasource:
-    url: jdbc:mysql://localhost:3306/mydatabase
-    username: myuser
-    password: mypassword
+    # MySQL connection configuration
+    url: jdbc:mysql://localhost:3306/YOURDATABASE
+    # WARNING: Replace with environment variables in production!
+    username: YOURUSERNAME
+    password: YOURPASSWORD
     driver-class-name: com.mysql.cj.jdbc.Driver
+    # Recommended to add connection pool configurations:
+    # hikari:
+    #   maximum-pool-size: 10
+    #   connection-timeout: 30000
+
+# ============================================
+# API DOCUMENTATION - SWAGGER/OPENAPI
+# ============================================
 
 spring-doc:
+  # Restricts documentation only to version 1 API endpoints
   pathsToMatch: /api/**/v1/**
   swagger-ui:
+    # Access Swagger UI at root: http://localhost:8080/
     use-root-path: true
+  # Consider adding in production:
+  # api-docs:
+  #   enabled: false  # Disable docs in production
+  # swagger-ui:
+  #   enabled: false  # Disable UI in production
+
+# ====================================================
+# CORS CONFIGURATIONS (Cross-Origin Resource Sharing)
+# ====================================================
 
 cors:
   originPatterns:
-    - http://example1:0000
-    - https://example.com.br
+    - http://example1:0000        # Example for local/development environment
+    - https://example.com.br      # Production domain
+  # Recommended to configure specific methods and headers:
+  # allowed-methods: GET, POST, PUT, DELETE, OPTIONS
+  # allowed-headers: "*"
+  # allow-credentials: true/false
+
+# ============================================
+# SECURITY CONFIGURATIONS - JWT
+# ============================================
 
 jwt:
-  secret: d90b2fa69a24fb813194afe9a323541a
+  # *** CRITICAL: NEVER leave secret in source code! ***
+  # Use environment variables or secret manager (e.g., AWS Secrets Manager, Azure Key Vault)
+  # Example: ${JWT_SECRET:fallbackSecret}
+  # Should have at least 256 bits (32 characters) for HS256
+  secret: YOURSUPERULTRAMEGASECRET
+  # Consider adding:
+  # expiration: 86400000  # 24 hours in milliseconds
+  # refresh-expiration: 604800000  # 7 days for refresh token
