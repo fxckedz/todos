@@ -3,7 +3,8 @@ package br.com.medeiros.api.todo.v1.exceptions.customExceptions;
 import org.springframework.http.HttpStatus;
 
 public class CustomException extends RuntimeException{
-    private final HttpStatus status;
+    private static final long serialVersionUID = 1L;
+	private final HttpStatus status;
 
     public CustomException(String message, HttpStatus status){
         super(message);

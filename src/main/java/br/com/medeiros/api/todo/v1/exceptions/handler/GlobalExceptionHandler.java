@@ -2,9 +2,6 @@ package br.com.medeiros.api.todo.v1.exceptions.handler;
 
 import br.com.medeiros.api.todo.v1.exceptions.ExceptionResponse;
 import br.com.medeiros.api.todo.v1.exceptions.customExceptions.CustomException;
-import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NotFoundId;
-import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NullIdException;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

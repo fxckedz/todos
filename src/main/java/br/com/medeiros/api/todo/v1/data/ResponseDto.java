@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 import br.com.medeiros.api.todo.v1.entities.TodoEntity;
 import br.com.medeiros.api.todo.v1.enums.TodoStatus;
