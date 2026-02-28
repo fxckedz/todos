@@ -1,5 +1,12 @@
 package br.com.medeiros.api.todo.v1.controllers.auth;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import br.com.medeiros.api.todo.v1.data.LoginResponse;
 import br.com.medeiros.api.todo.v1.data.RegisterDto;
 import br.com.medeiros.api.todo.v1.entities.UserEntity;
@@ -13,12 +20,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/todos/v1/auth/register")
@@ -49,6 +50,10 @@ public class Register {
     public ResponseEntity<?> register(@RequestBody @Valid RegisterDto dto) {
         if(userRepository.findByUsername(dto.username()).isPresent()) {
             return ResponseEntity.badRequest().body("Username already exists");
+        }
+
+        if(!dto.password().equals(dto.passwordConfirmation())){
+            return ResponseEntity.badRequest().body("Passwords are not equals");
         }
 
         UserEntity user = new UserEntity();

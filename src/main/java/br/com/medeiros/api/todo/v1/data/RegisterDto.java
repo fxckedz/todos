@@ -8,6 +8,9 @@ public record RegisterDto(
         String username,
 
         @NotBlank
-        String password
+        String password,
+
+        @NotBlank
+        String passwordConfirmation
 ) {
 }
