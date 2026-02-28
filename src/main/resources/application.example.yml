@@ -9,17 +9,17 @@ spring:
       # Options: validate | update | create | create-drop | none
       # - update: updates schema, but can cause data loss
       # - In production use: validate or controlled migrations (Flyway/Liquibase)
-      ddl-auto: update
+      ## ddl-auto: update
     # Shows SQL in console - useful for development, disable in production
-    show-sql: true
+    # show-sql: true
   
   datasource:
     # MySQL connection configuration
-    url: jdbc:mysql://localhost:3306/YOURDATABASE
+    # url: jdbc:mysql://localhost:3306/YOURDATABASE
     # WARNING: Replace with environment variables in production!
-    username: YOURUSERNAME
-    password: YOURPASSWORD
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    # username: YOURUSERNAME
+    # password: YOURPASSWORD
+    # driver-class-name: com.mysql.cj.jdbc.Driver
     # Recommended to add connection pool configurations:
     # hikari:
     #   maximum-pool-size: 10
@@ -31,15 +31,15 @@ spring:
 
 spring-doc:
   # Restricts documentation only to version 1 API endpoints
-  pathsToMatch: /api/**/v1/**
-  swagger-ui:
+  # pathsToMatch: /api/**/v1/**
+  # swagger-ui:
     # Access Swagger UI at root: http://localhost:8080/
-    use-root-path: true
+  #  use-root-path: true
   # Consider adding in production:
   # api-docs:
-  #   enabled: false  # Disable docs in production
+  # enabled: true  # Disable docs in production
   # swagger-ui:
-  #   enabled: false  # Disable UI in production
+  # enabled: true  # Disable UI in production
 
 # ====================================================
 # CORS CONFIGURATIONS (Cross-Origin Resource Sharing)
@@ -47,8 +47,8 @@ spring-doc:
 
 cors:
   originPatterns:
-    - http://example1:0000        # Example for local/development environment
-    - https://example.com.br      # Production domain
+  #  - http://example1:0000        # Example for local/development environment
+  #  - https://example.com.br      # Production domain
   # Recommended to configure specific methods and headers:
   # allowed-methods: GET, POST, PUT, DELETE, OPTIONS
   # allowed-headers: "*"
@@ -63,7 +63,7 @@ jwt:
   # Use environment variables or secret manager (e.g., AWS Secrets Manager, Azure Key Vault)
   # Example: ${JWT_SECRET:fallbackSecret}
   # Should have at least 256 bits (32 characters) for HS256
-  secret: YOURSUPERULTRAMEGASECRET
+  # secret: YOURSUPERULTRAMEGASECRET
   # Consider adding:
   # expiration: 86400000  # 24 hours in milliseconds
   # refresh-expiration: 604800000  # 7 days for refresh token
