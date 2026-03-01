@@ -5,12 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import br.com.medeiros.api.todo.v1.entities.TodoEntity;
-import br.com.medeiros.api.todo.v1.enums.TodoStatus;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.springframework.hateoas.RepresentationModel;
+
+import br.com.medeiros.api.todo.v1.entities.TodoEntity;
+import br.com.medeiros.api.todo.v1.enums.TodoStatus;
 
 @JsonPropertyOrder({
         "id",
@@ -83,10 +87,10 @@ public final class ResponseDto extends RepresentationModel<ResponseDto> {
     public List<EnhancedLink> getActions() { return actions; }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (ResponseDto) obj;
+        ResponseDto that = (ResponseDto) obj;
         return this.id.equals(that.id) &&
                 this.name.equals(that.name) &&
                 this.description.equals(that.description) &&
@@ -100,6 +104,7 @@ public final class ResponseDto extends RepresentationModel<ResponseDto> {
     }
 
     @Override
+    @NonNull
     public String toString() {
         return "ResponseDto[" +
                 "id=" + id + ", " +
@@ -117,6 +122,5 @@ public final class ResponseDto extends RepresentationModel<ResponseDto> {
                 todoEntity.getStatus(),
                 todoEntity.getCreatedAt());
     }
-
 
 }
