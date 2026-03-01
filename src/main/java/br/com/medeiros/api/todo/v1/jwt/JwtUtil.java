@@ -1,14 +1,15 @@
 package br.com.medeiros.api.todo.v1.jwt;
 
-import br.com.medeiros.api.todo.v1.entities.UserEntity;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import br.com.medeiros.api.todo.v1.entities.UserEntity;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
@@ -16,13 +17,16 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String secret;
 
+    @Value("${jwt.expiration}")
+    private long expirationInMs;
+
     public String generateToken(UserEntity user) {
         return Jwts.builder()
                 .setSubject(user.getUsername())
                 .claim("role", user.getRole().name())
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(
-                        LocalDateTime.now().plusHours(4)
+                        LocalDateTime.now().plusMinutes(expirationInMs)
                                 .atZone(ZoneId.systemDefault()).toInstant()))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
