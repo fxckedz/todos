@@ -12,13 +12,20 @@ services:
       - SPRING_JPA_SHOW_SQL=true
       - SPRINGDOC_PATHS_TO_MATCH=/api/**/v1/**
       - SPRINGDOC_SWAGGER_UI_USE_ROOT_PATH=true
-      - CORS_ORIGINPATTERNS=http://example1:0000,https://example.com.br
+      - CORS_ORIGINPATTERNS=http://localhost:8080
       - JWT_SECRET=d90b2fa69a24fb813194afe9a323541a
+      - JWT_EXPIRATION=600
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
 
   mysql:
     image: mysql:8.0
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "myuser", "-p${MYSQL_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     environment:
       - MYSQL_ROOT_PASSWORD=rootpassword
       - MYSQL_DATABASE=mydatabase

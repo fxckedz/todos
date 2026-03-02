@@ -1,0 +1,43 @@
+# ======================================================
+# SPRING BOOT CONFIGURATIONS
+# ======================================================
+
+spring:
+  application:
+    name: todo-api
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/mydatabase}
+    username: ${SPRING_DATASOURCE_USERNAME:myuser}
+    password: ${SPRING_DATASOURCE_PASSWORD:mypassword}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+    show-sql: ${SPRING_JPA_SHOW_SQL:true}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+# ============================================
+# API DOCUMENTATION - SWAGGER/OPENAPI
+# ============================================
+
+springdoc:
+  paths-to-match: ${SPRINGDOC_PATHS_TO_MATCH:/api/**/v1/**}
+  swagger-ui:
+    use-root-path: ${SPRINGDOC_SWAGGER_UI_USE_ROOT_PATH:true}
+  api-docs:
+    enabled: true
+
+# ============================================
+# SECURITY & CORS
+# ============================================
+
+cors:
+  originPatterns: ${CORS_ORIGINPATTERNS:http://localhost:8080}
+
+jwt:
+  secret: ${JWT_SECRET:d90b2fa69a24fb813194afe9a323541a}
+  expiration: 600
