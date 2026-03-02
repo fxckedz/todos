@@ -1,35 +1,40 @@
 package br.com.medeiros.api.todo.v1.exceptions;
 
-import org.springframework.http.HttpStatus;
+import java.time.LocalDateTime;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Date;
+public class ExceptionResponse {
 
-public class ExceptionResponse implements Serializable {
+    private LocalDateTime timestamp;
+    private Integer status;
+    private String error;
+    private String message;
+    private String path;
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-
-    private Date timestamp;
-    private HttpStatus message;
-    private String details;
-
-    public ExceptionResponse(Date timestamp, HttpStatus message, String details) {
-        this.timestamp = timestamp;
+    public ExceptionResponse(Integer status, String error, String message, String path) {
+        this.timestamp = LocalDateTime.now();
+        this.status = status;
+        this.error = error;
         this.message = message;
-        this.details = details;
+        this.path = path;
     }
 
-    public Date getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public HttpStatus getMessage() {
+    public Integer getStatus() {
+        return status;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public String getMessage() {
         return message;
     }
 
-    public String getDetails() {
-        return details;
+    public String getPath() {
+        return path;
     }
 }
