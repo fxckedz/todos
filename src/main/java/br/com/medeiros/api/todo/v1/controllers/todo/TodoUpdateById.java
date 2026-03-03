@@ -1,5 +1,15 @@
 package br.com.medeiros.api.todo.v1.controllers.todo;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import br.com.medeiros.api.todo.v1.data.RequestUpdateTodoByIdDto;
 import br.com.medeiros.api.todo.v1.data.ResponseDto;
 import br.com.medeiros.api.todo.v1.entities.TodoEntity;
@@ -12,19 +22,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api/todos/v1")
 @Tag(name = "UpdateById", description = "Update todo by Id")
 public class TodoUpdateById {
 
-    private TodoService todoService;
+    private final TodoService todoService;
 
     public TodoUpdateById(TodoService todoService) {
         this.todoService = todoService;

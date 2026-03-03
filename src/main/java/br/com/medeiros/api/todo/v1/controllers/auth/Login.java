@@ -30,7 +30,7 @@ public class Login {
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public Login(UserRepository userRepository, JwtUtil jwtUtil, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;

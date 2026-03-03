@@ -1,5 +1,16 @@
 package br.com.medeiros.api.todo.v1.controllers.todo;
 
+import java.net.URI;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import br.com.medeiros.api.todo.v1.data.RequestCreateTodoDto;
 import br.com.medeiros.api.todo.v1.data.ResponseDto;
 import br.com.medeiros.api.todo.v1.entities.UserEntity;
@@ -12,23 +23,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
-import java.net.URI;
 
 @RestController
 @RequestMapping("/api/todos/v1")
 @Tag(name = "Create", description = "Create Todos")
 public class TodoCreate {
 
-    private TodoService todoService;
+    private final TodoService todoService;
 
     public TodoCreate(TodoService todoService) {
         this.todoService = todoService;

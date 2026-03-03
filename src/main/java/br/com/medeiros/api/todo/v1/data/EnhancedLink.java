@@ -1,10 +1,10 @@
 package br.com.medeiros.api.todo.v1.data;
 
 public class EnhancedLink {
-    private String rel;
-    private String href;
-    private String method;
-    private String description;
+    private final String rel;
+    private final String href;
+    private final String method;
+    private final String description;
 
     public EnhancedLink(String rel, String href, String method, String description) {
         this.rel = rel;
