@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import br.com.medeiros.api.todo.v1.exceptions.ExceptionResponse;
 import br.com.medeiros.api.todo.v1.exceptions.customExceptions.CustomException;
@@ -77,5 +78,21 @@ public class GlobalExceptionHandler {
                 request.getRequestURI());
 
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ExceptionResponse> NoResourceFoundException(
+        NoResourceFoundException ex,
+        HttpServletRequest request
+) {
+        
+        ExceptionResponse body = new ExceptionResponse(
+                HttpStatus.NOT_FOUND.value(),
+                "Not Found",
+                "Rota não Encontrada",
+                request.getRequestURI());
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 }
