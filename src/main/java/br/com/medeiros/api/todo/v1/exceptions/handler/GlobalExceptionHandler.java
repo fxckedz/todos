@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
         ExceptionResponse body = new ExceptionResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 "Bad Request",
-                ex.getMessage(),
+                ex.getBindingResult().getFieldError().getDefaultMessage(),
                 request.getRequestURI());
         
 

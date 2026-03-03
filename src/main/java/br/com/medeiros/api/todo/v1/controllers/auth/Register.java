@@ -12,6 +12,8 @@ import br.com.medeiros.api.todo.v1.data.RegisterDto;
 import br.com.medeiros.api.todo.v1.entities.UserEntity;
 import br.com.medeiros.api.todo.v1.enums.Role;
 import br.com.medeiros.api.todo.v1.exceptions.ExceptionResponse;
+import br.com.medeiros.api.todo.v1.exceptions.customExceptions.BadRequestException;
+import br.com.medeiros.api.todo.v1.exceptions.customExceptions.UserAlreadyExistsException;
 import br.com.medeiros.api.todo.v1.jwt.JwtUtil;
 import br.com.medeiros.api.todo.v1.repositories.UserRepository;
 import br.com.medeiros.api.todo.v1.util.MediaType;
@@ -49,11 +51,11 @@ public class Register {
             })
     public ResponseEntity<?> register(@RequestBody @Valid RegisterDto dto) {
         if(userRepository.findByUsername(dto.username()).isPresent()) {
-            return ResponseEntity.badRequest().body("Username already exists");
+            throw new UserAlreadyExistsException();
         }
 
         if(!dto.password().equals(dto.passwordConfirmation())){
-            return ResponseEntity.badRequest().body("Passwords are not equals");
+            throw new BadRequestException("Passwords are not equal");
         }
 
         UserEntity user = new UserEntity();

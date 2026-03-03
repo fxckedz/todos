@@ -1,9 +1,18 @@
 package br.com.medeiros.api.todo.v1.controllers.auth;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import br.com.medeiros.api.todo.v1.data.LoginDto;
 import br.com.medeiros.api.todo.v1.data.LoginResponse;
 import br.com.medeiros.api.todo.v1.entities.UserEntity;
 import br.com.medeiros.api.todo.v1.exceptions.ExceptionResponse;
+import br.com.medeiros.api.todo.v1.exceptions.customExceptions.InvalidCredentialsException;
 import br.com.medeiros.api.todo.v1.jwt.JwtUtil;
 import br.com.medeiros.api.todo.v1.repositories.UserRepository;
 import br.com.medeiros.api.todo.v1.util.MediaType;
@@ -13,14 +22,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/todos/v1/auth/login")
@@ -55,7 +56,7 @@ public class Login {
 
 
         if (!passwordEncoder.matches(dto.password(), user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            throw new InvalidCredentialsException("Inavlid Credentials");
         }
 
         String token = jwtUtil.generateToken(user);
