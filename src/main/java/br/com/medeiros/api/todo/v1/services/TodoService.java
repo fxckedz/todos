@@ -1,5 +1,9 @@
 package br.com.medeiros.api.todo.v1.services;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import br.com.medeiros.api.todo.v1.data.RequestCreateTodoDto;
 import br.com.medeiros.api.todo.v1.data.RequestUpdateTodoByIdDto;
 import br.com.medeiros.api.todo.v1.entities.TodoEntity;
@@ -7,9 +11,6 @@ import br.com.medeiros.api.todo.v1.entities.UserEntity;
 import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NotFoundId;
 import br.com.medeiros.api.todo.v1.exceptions.customExceptions.NullIdException;
 import br.com.medeiros.api.todo.v1.repositories.TodoRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class TodoService {

@@ -19,7 +19,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-
 # ============================================
 # API DOCUMENTATION - SWAGGER/OPENAPI
 # ============================================
